@@ -29,5 +29,33 @@ class NppesResponse(object):
         self.conn = sqlite3.connect(sqlite_db)
         self.cursor = self.conn.cursor()
 
+    def process_nppes_result(self, result):
+        response_keys = {
+            'addresses': dict(fields=['address_1', 'address_purpose', 'city', 'postal_code', 'state', 'telephone'],
+                              values=dict()),
+            'basic': dict(fields=['authorized_official_crendential', 'authorized_official_first_name',
+                                  'authorized_official_last_name', 'enumeration_date', 'organization_name'],
+                          values=dict()),
+            'taxonomies': dict(fields=['code', 'desc', 'license'], values=dict()),
+            'number': None
+        }
+        for item in result['addresses']:
+            if item['address_purpose'] == 'LOCATION':
+                for field in response_keys['addresses']['fields']:
+                    response_keys['addresses']['values'][field] = item[field]
+                break
 
-    def process_nppes_result(self):
+        for field in response_keys['basic']['fields']:
+            response_keys['basic']['values'][field] = result['basic'][field]
+
+        for item in result['taxonomies']:
+            if item['primary']:
+                for field in response_keys['taxonomies']['fields']:
+                    response_keys['taxonomies']['values'][field] = item[field]
+
+        response_keys['number'] = result['number']
+        
+
+
+
+
