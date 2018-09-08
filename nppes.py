@@ -75,7 +75,7 @@ def process_nppes_result(result):
 
 if __name__ == '__main__':
     nppes = NppesResponse('nppes.sqlite')
-    for i in range(20):
+    for i in range(len(zip_codes)):
         response = None
         response = ca_zip_nppes(i)
         if response is not None:
